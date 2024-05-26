@@ -37,16 +37,40 @@ class AuthController extends Controller
             if ($user) {
                 // * Check password
                 if (!Hash::check($payload["password"], $user->password)) {
-                    return response()->json(["status" => 401, "message" => "Invalid credentials."]);
+                    return response()->json(["message" => "Invalid credentials."], 401);
                 }
 
                 $token = $user->createToken("web")->plainTextToken;
                 $authRes = array_merge($user->toArray(), ["token" => $token]);
                 return ["status" => 200, "user" => $authRes, "message" => "Loggedin succssfully!"];
             }
-            return response()->json(["status" => 401, "message" => "No account found with these credentials."]);
+            return response()->json(["message" => "Invalid Credentials"], 401);
         } catch (\Exception $err) {
-            Log::info("user_register_err =>" . $err->getMessage());
+            Log::info("Login error =>" . $err->getMessage());
+            return response()->json(["status" => 500, "message" => "Something went wrong!"], 500);
+        }
+    }
+
+    public function checkCredentials(Request $request)
+    {
+        $payload = $request->validate([
+            "email" => "required|email",
+            "password" => "required"
+        ]);
+
+        try {
+            $user = User::where("email", $payload["email"])->first();
+            if ($user) {
+                // * Check password
+                if (!Hash::check($payload["password"], $user->password)) {
+                    return response()->json(["message" => "Invalid credentials."], 401);
+                }
+
+                return response()->json(["status" => 200,  "message" => "Loggedin succssfully!"]);
+            }
+            return response()->json(["message" => "Invalid Credentials"], 401);
+        } catch (\Exception $err) {
+            Log::info("Login credentials error =>" . $err->getMessage());
             return response()->json(["status" => 500, "message" => "Something went wrong!"], 500);
         }
     }
