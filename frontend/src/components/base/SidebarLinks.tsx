@@ -1,14 +1,20 @@
+'use client';
 import { ArrowBigUp, Flame, Search, Link as LinkIcon } from 'lucide-react';
 
 import React from 'react';
 import UserAvatar from '../common/UserAvatar';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { CustomUser } from '@/app/api/auth/[...nextauth]/authOptions';
 
 const SidebarLinks = () => {
+  const { data } = useSession();
+  const user = data?.user as CustomUser;
+
   return (
     <div>
       <Link href="/" className="flex space-x-4 items-center py-4">
-        <UserAvatar />
+        <UserAvatar image={user?.profile_image ?? undefined} />
         <p>Feed</p>
       </Link>
       <p className="my-2 font-bold text-muted-foreground">Discover</p>
