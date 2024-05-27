@@ -1,11 +1,18 @@
+import { getImageUrl } from '@/lib/utils';
 import Image from 'next/image';
 import React from 'react';
 
 const UserAvatar = ({ image }: { image?: string }) => {
   return (
-    <div className="cursor-pointer">
+    <div>
       {image ? (
-        <Image src={image} alt="avatar" width={40} height={40} />
+        <Image
+          src={getImageUrl(image)}
+          alt="avatar"
+          width={40}
+          height={40}
+          className="rounded-full"
+        />
       ) : (
         <Image src="/avatar.png" alt="avatar" width={40} height={40} />
       )}
