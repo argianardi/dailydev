@@ -6,9 +6,8 @@ import React from 'react';
 import SearchInput from './SearchInput';
 import ProfileMenu from './ProfileMenu';
 import MobileSidebar from './MobileSidebar';
-import { CustomUser } from '@/app/api/auth/[...nextauth]/authOptions';
 
-const Navbar = ({ user }: { user: CustomUser }) => {
+const Navbar = () => {
   return (
     <div>
       <nav className="flex justify-between items-center p-2 border-b">
@@ -19,7 +18,7 @@ const Navbar = ({ user }: { user: CustomUser }) => {
           <Button size="icon" variant="secondary">
             <BellIcon className="w-5 h-5" />
           </Button>
-          <ProfileMenu user={user} />
+          <ProfileMenu />
         </div>
       </nav>
     </div>
