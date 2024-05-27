@@ -1,6 +1,6 @@
 import { LOGIN_URL } from '@/lib/apiEndPoints';
 import appAxios from '@/lib/axios.config';
-import NextAuth, { AuthOptions, ISODateString, User } from 'next-auth';
+import { AuthOptions, ISODateString, User } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
@@ -24,6 +24,11 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, trigger, session }) {
+      if (trigger === 'update' && session?.profile_image) {
+        const user: CustomUser = token.user as CustomUser;
+        user.profile_image = session?.profile_image;
+      }
+
       if (user) {
         token.user = user;
       }
