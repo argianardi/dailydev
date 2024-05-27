@@ -12,6 +12,10 @@ import {
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import appAxios from '@/lib/axios.config';
+import { REGISTER_URL } from '@/lib/apiEndPoints';
+import { toast } from 'react-toastify';
+import { signIn } from 'next-auth/react';
 
 const Register = () => {
   const [auth, setAuth] = useState({
@@ -19,9 +23,41 @@ const Register = () => {
     username: '',
     email: '',
     password: '',
-    passwordConfirmation: '',
+    password_confirmation: '',
   });
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({
+    name: [],
+    username: [],
+    email: [],
+    password: [],
+  });
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    setLoading(true);
+    appAxios
+      .post(REGISTER_URL, auth)
+      .then((res) => {
+        setLoading(false);
+        // const response = res.data;
+        toast.success('Account created successfully! We are logging you!');
+        signIn('credentials', {
+          email: auth.email,
+          password: auth.password,
+          redirect: true,
+          callbackUrl: '/',
+        });
+      })
+      .catch((err) => {
+        setLoading(false);
+        if (err.response?.status === 422) {
+          setErrors(err.response?.data.errors);
+        } else {
+          toast.error('Someting went wrong!. Please try again!');
+        }
+      });
+  };
 
   return (
     <div>
@@ -32,7 +68,7 @@ const Register = () => {
             <CardDescription>Welcome to Daily.dev</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="space-y-1">
                 <Label htmlFor="name">Name</Label>
                 <Input
@@ -42,6 +78,7 @@ const Register = () => {
                   type="name"
                   onChange={(e) => setAuth({ ...auth, name: e.target.value })}
                 />
+                <span className="text-red-400">{errors.name?.[0]}</span>
               </div>
               <div className="space-y-1">
                 <Label htmlFor="username">Username</Label>
@@ -54,6 +91,7 @@ const Register = () => {
                     setAuth({ ...auth, username: e.target.value })
                   }
                 />
+                <span className="text-red-400">{errors.username?.[0]}</span>
               </div>
               <div className="space-y-1">
                 <Label htmlFor="email">Email</Label>
@@ -64,6 +102,7 @@ const Register = () => {
                   type="email"
                   onChange={(e) => setAuth({ ...auth, email: e.target.value })}
                 />
+                <span className="text-red-400">{errors.email?.[0]}</span>
               </div>
               <div className="space-y-1">
                 <Label htmlFor="password">password</Label>
@@ -76,6 +115,7 @@ const Register = () => {
                     setAuth({ ...auth, password: e.target.value })
                   }
                 />
+                <span className="text-red-400">{errors.password?.[0]}</span>
               </div>
               <div className="space-y-1">
                 <Label htmlFor="passwordConfirmation">
@@ -83,11 +123,11 @@ const Register = () => {
                 </Label>
                 <Input
                   id="passwordConfirmation"
-                  value={auth.passwordConfirmation}
+                  value={auth.password_confirmation}
                   type="password"
                   placeholder="Enter here..."
                   onChange={(e) =>
-                    setAuth({ ...auth, passwordConfirmation: e.target.value })
+                    setAuth({ ...auth, password_confirmation: e.target.value })
                   }
                 />
               </div>
