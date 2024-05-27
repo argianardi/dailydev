@@ -1,7 +1,11 @@
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import './globals.css';
 import Head from 'next/head';
+import AuthProvider from '@/providers/AuthProvider';
 
 const nunito = Nunito({ subsets: ['latin'] });
 
@@ -25,7 +29,10 @@ export default function RootLayout({
           sizes="<generated>"
         />
       </Head>
-      <body className={nunito.className}>{children}</body>
+      <body className={nunito.className}>
+        <ToastContainer />
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
