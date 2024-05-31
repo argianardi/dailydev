@@ -6,4 +6,4 @@ export const REGISTER_URL = '/auth/register';
 export const LOGOUT_URL = '/auth/logout';
 export const CHECK_CREDENTIALS = '/auth/checkCredentials';
 export const UPDATE_PROFILE = '/update/profile';
-export const Post_URL = '/post';
+export const POST_URL = '/post';
