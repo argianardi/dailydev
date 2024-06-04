@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\PostBroadCastEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
@@ -29,7 +30,10 @@ class PostController extends Controller
         try {
             $user = $request->user();
             $payload['user_id'] = $user->id;
-            $post = Post::create($payload);
+            $post = Post::create($payload)->with('user')->orderByDesc('id')->first();
+
+            // Dispatched the event
+            PostBroadCastEvent::dispatch($post);
 
             return response()->json(['message' => 'Post created successfully', 'post' => $post], 201);
         } catch (\Exception $err) {
